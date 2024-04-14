@@ -1,16 +1,18 @@
 package br.com.igormartinez.greetingservice.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 @Component
+@RefreshScope
 @ConfigurationProperties("greeting-service")
-public class GreetingConfig {
+public class GreetingProperties {
     
     private String greeting;
     private String defaultValue;
 
-    public GreetingConfig() {
+    public GreetingProperties() {
     }
 
     public String getGreeting() {
