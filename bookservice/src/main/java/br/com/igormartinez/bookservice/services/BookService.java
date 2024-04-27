@@ -27,18 +27,21 @@ public class BookService {
         Book book = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        CambioResponseDTO camvioResponse = cambioProxy.getCambio(
+        CambioResponseDTO cambioResponse = cambioProxy.getCambio(
             book.getPrice(), "USD", currency
         );
+
+        String enviroment = "BOOK PORT: " + environment.getProperty("local.server.port");
+        enviroment += " CAMBIO PORT: " + cambioResponse.environment();
 
         return new BookResponseDTO(
             book.getId(), 
             book.getAuthor(), 
             book.getTitle(), 
             book.getLaunchDate(), 
-            camvioResponse.convertedValue(), 
+            cambioResponse.convertedValue(), 
             currency, 
-            environment.getProperty("local.server.port")
+            enviroment
         );
     }
 }
