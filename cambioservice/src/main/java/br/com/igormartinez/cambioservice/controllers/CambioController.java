@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.igormartinez.cambioservice.dto.response.CambioResponseDTO;
 import br.com.igormartinez.cambioservice.services.CambioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.math.BigDecimal;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "Cambio endpoint")
 @RestController
 @RequestMapping("/cambio-service")
 public class CambioController {
@@ -21,6 +24,7 @@ public class CambioController {
         this.service = service;
     }
 
+    @Operation(summary = "Get cambio from currency")
     @GetMapping("/{amount}/{from}/{to}")
     public CambioResponseDTO getCambio(
         @PathVariable("amount") BigDecimal amount,
