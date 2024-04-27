@@ -1,0 +1,15 @@
+server:
+    port: 8100
+spring:
+    application:
+        name: bookservice
+    datasource:
+        url: jdbc:postgresql://localhost:5433/bookservice
+        username: postgres
+        password: admin123
+    flyway:
+        locations: classpath:/db/migrations
+    jpa:
+        hibernate:
+            ddl-auto: none
+        show-sql: false
