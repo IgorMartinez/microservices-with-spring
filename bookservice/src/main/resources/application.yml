@@ -2,7 +2,7 @@ server:
     port: 8100
 spring:
     application:
-        name: bookservice
+        name: book-service
     datasource:
         url: jdbc:postgresql://localhost:5433/bookservice
         username: postgres

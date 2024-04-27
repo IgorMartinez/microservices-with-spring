@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import br.com.igormartinez.bookservice.dto.cambioservice.CambioResponseDTO;
 import br.com.igormartinez.bookservice.dto.response.BookResponseDTO;
 import br.com.igormartinez.bookservice.models.Book;
+import br.com.igormartinez.bookservice.proxys.CambioProxy;
 import br.com.igormartinez.bookservice.repositories.BookRepository;
 
 @Service
@@ -13,12 +14,12 @@ public class BookService {
     
     private final Environment environment;
     private final BookRepository repository;
-    private final CambioService cambioService;
+    private final CambioProxy cambioProxy;
 
-    public BookService(Environment environment, BookRepository repository, CambioService cambioService) {
+    public BookService(Environment environment, BookRepository repository, CambioProxy cambioProxy) {
         this.environment = environment;
         this.repository = repository;
-        this.cambioService = cambioService;
+        this.cambioProxy = cambioProxy;
     }
 
     public BookResponseDTO findById(Long id, String currency) {
@@ -26,7 +27,7 @@ public class BookService {
         Book book = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        CambioResponseDTO camvioResponse = cambioService.getCambio(
+        CambioResponseDTO camvioResponse = cambioProxy.getCambio(
             book.getPrice(), "USD", currency
         );
 

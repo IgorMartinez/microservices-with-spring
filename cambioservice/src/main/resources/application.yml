@@ -2,7 +2,7 @@ server:
     port: 8000
 spring:
     application:
-        name: cambioservice
+        name: cambio-service
     datasource:
         url: jdbc:postgresql://localhost:5432/cambioservice
         username: postgres
