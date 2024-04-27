@@ -3,3 +3,13 @@ server:
 spring:
     application:
         name: cambioservice
+    datasource:
+        url: jdbc:postgresql://localhost:5432/cambioservice
+        username: postgres
+        password: admin123
+    flyway:
+        locations: classpath:/db/migrations
+    jpa:
+        hibernate:
+            ddl-auto: none
+        show-sql: false
