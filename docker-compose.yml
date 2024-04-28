@@ -1,4 +1,8 @@
 services:
+  zipkin:
+    image: openzipkin/zipkin:3.3.0
+    ports:
+    - 9411:9411
   cambioservice-db:
     image: postgres:16.2
     restart: always
