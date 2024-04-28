@@ -1,6 +1,7 @@
 services:
-  microservices-with-spring-cambioservice-db:
+  cambioservice-db:
     image: postgres:16.2
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
@@ -11,9 +12,10 @@ services:
     expose:
       - 5432
     networks:
-      - microservices-with-spring-network
-  microservices-with-spring-bookservice-db:
+      - app-network
+  bookservice-db:
     image: postgres:16.2
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
@@ -24,7 +26,7 @@ services:
     expose:
       - 5433
     networks:
-      - microservices-with-spring-network
+      - app-network
 networks:
-  microservices-with-spring-network:
+  app-network:
     driver: bridge
