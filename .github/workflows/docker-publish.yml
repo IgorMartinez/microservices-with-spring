@@ -38,3 +38,14 @@ jobs:
       - name: Docker Compose Build
         working-directory: .
         run: docker compose build
+
+      - name: Push to Docker Hub Container Registry
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-namingserver:latest ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-namingserver:${{ github.run_id }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-apigateway:latest ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-apigateway:${{ github.run_id }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-cambioservice:latest ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-cambioservice:${{ github.run_id }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-bookservice:latest ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-bookservice:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-namingserver:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-apigateway:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-cambioservice:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/microservices-with-spring-bookservice:${{ github.run_id }}
