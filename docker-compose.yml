@@ -9,9 +9,13 @@ services:
       - 8765:8765
     depends_on:
       - namingserver
+      - rabbit-mq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
       MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
     networks:
       - app-network
   bookservice-api:
@@ -25,12 +29,16 @@ services:
     depends_on:
       - bookservice-db
       - namingserver
+      - rabbit-mq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
       MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
       SPRING.DATASOURCE.URL: jdbc:postgresql://bookservice-db/bookservice
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: admin123
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
     networks:
       - app-network
   bookservice-db:
@@ -58,12 +66,16 @@ services:
     depends_on:
       - cambioservice-db
       - namingserver
+      - rabbit-mq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
       MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
       SPRING.DATASOURCE.URL: jdbc:postgresql://cambioservice-db/cambioservice
       SPRING.DATASOURCE.USERNAME: postgres
       SPRING.DATASOURCE.PASSWORD: admin123
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
     networks:
       - app-network
   cambioservice-db:
@@ -90,11 +102,23 @@ services:
       - 8761:8761
     networks:
       - app-network
+  rabbit-mq:
+    image: rabbitmq:3.13.1-management
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app-network
   zipkinserver:
     image: openzipkin/zipkin:3.3.0
     restart: always
     ports:
-    - 9411:9411
+      - 9411:9411
+    depends_on:
+      - rabbit-mq
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
     networks:
       - app-network
 networks:
