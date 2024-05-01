@@ -20,19 +20,19 @@ jobs:
           distribution: 'corretto'
           
       - name: Build Naming Server JAR
-        working-directory: .\namingserver
+        working-directory: namingserver
         run: mvn clean package -DskipTests
         
       - name: Build API Gateway JAR
-        working-directory: .\apigateway
+        working-directory: apigateway
         run: mvn clean package -DskipTests
         
       - name: Build Cambio Service JAR
-        working-directory: .\cambioservice
+        working-directory: cambioservice
         run: mvn clean package -DskipTests
         
       - name: Build Book Service JAR
-        working-directory: .\bookservice
+        working-directory: bookservice
         run: mvn clean package -DskipTests
 
       - name: Docker Compose Build
