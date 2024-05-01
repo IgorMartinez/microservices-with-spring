@@ -1,34 +1,100 @@
 services:
-  zipkin:
-    image: openzipkin/zipkin:3.3.0
-    ports:
-    - 9411:9411
-  cambioservice-db:
-    image: postgres:16.2
+  apigateway:
+    image: igormartinez/microservices-with-spring-apigateway
+    build: 
+      context: .
+      dockerfile: apigateway/Dockerfile
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: cambioservice
-      TZ: America/Sao_Paulo
     ports:
-      - 5432:5432
-    expose:
-      - 5432
+      - 8765:8765
+    depends_on:
+      - namingserver
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
+    networks:
+      - app-network
+  bookservice-api:
+    image: igormartinez/microservices-with-spring-bookservice
+    build:
+      context: .
+      dockerfile: bookservice/Dockerfile
+    restart: always
+    ports:
+      - 8100:8100
+    depends_on:
+      - bookservice-db
+      - namingserver
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
+      SPRING.DATASOURCE.URL: jdbc:postgresql://bookservice-db/bookservice
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: admin123
     networks:
       - app-network
   bookservice-db:
     image: postgres:16.2
     restart: always
     environment:
+      TZ: America/Sao_Paulo
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: bookservice
-      TZ: America/Sao_Paulo
     ports:
       - 5433:5432
     expose:
       - 5433
+    networks:
+      - app-network
+  cambioservice-api:
+    image: igormartinez/microservices-with-spring-cambioservice
+    build:
+      context: .
+      dockerfile: cambioservice/Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - cambioservice-db
+      - namingserver
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://namingserver:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkinserver:9411/api/v2/spans
+      SPRING.DATASOURCE.URL: jdbc:postgresql://cambioservice-db/cambioservice
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: admin123
+    networks:
+      - app-network
+  cambioservice-db:
+    image: postgres:16.2
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: cambioservice
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    networks:
+      - app-network
+  namingserver:
+    image: igormartinez/microservices-with-spring-namingserver
+    build: 
+      context: .
+      dockerfile: namingserver/Dockerfile
+    restart: always
+    ports:
+      - 8761:8761
+    networks:
+      - app-network
+  zipkinserver:
+    image: openzipkin/zipkin:3.3.0
+    restart: always
+    ports:
+    - 9411:9411
     networks:
       - app-network
 networks:
