@@ -6,9 +6,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      
       - name: Log in to Docker Hub
         uses: docker/login-action@v3.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          
+      - name: Build Naming Server JAR
+        working-directory: .\namingserver
+        run: mvn clean package -DskipTests
+        
+      - name: Build API Gateway JAR
+        working-directory: .\apigateway
+        run: mvn clean package -DskipTests
+        
+      - name: Build Cambio Service JAR
+        working-directory: .\cambioservice
+        run: mvn clean package -DskipTests
+        
+      - name: Build Book Service JAR
+        working-directory: .\bookservice
+        run: mvn clean package -DskipTests
+
+      - name: Docker Compose Build
+        working-directory: .
+        run: docker compose build
